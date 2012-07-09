@@ -100,6 +100,14 @@ FeltMap = () ->
     fmap.displayLocations(locationsDivId)
     fmap
 
+  fmap.data = (_) ->
+    if !arguments.length
+      return data
+    data = _
+    update()
+    fmap.displayLocations(locationsDivId)
+    fmap
+
   fmap.remove = (index) ->
     console.log(index)
     data.splice(index,1)
@@ -234,22 +242,35 @@ setBackground = (newBackground) ->
 
 $ ->
   options =
-    opacity:0.5
-    line:"#DDDDDD"
-    background:"#198587"
+    opacity:Hash.get('opacity') or 0.5
+    line:Hash.get('line') or "DDDDDD"
+    background:Hash.get('background') or "198587"
+
+  options.background = "#{options.background}"
+  options.line = "#{options.line}"
 
   map = FeltMap().opacity(options.opacity)
     .line(options.line)
 
   setBackground(options.background)
 
-  d3.csv "data/locations.csv", (data) ->
+  data = Hash.get('data')
+
+  if data
+    console.log('loading data from url')
+    map.data(data)
     plotData("#vis", data, map)
     map.displayLocations("#all_locations")
-    false
+  else
+    d3.csv "data/locations.csv", (data) ->
+      plotData("#vis", data, map)
+      map.displayLocations("#all_locations")
+      false
 
   d3.select("#mapOpacity").on "change", (d) ->
-    map.opacity(parseFloat(this.value))
+    newOpacity = parseFloat(this.value)
+    map.opacity(newOpacity)
+    options.opacity = newOpacity
   
   addLatLon = (val) ->
     point = val.split(",").map (s) -> parseFloat(s.replace(/\s/g,''))
@@ -285,6 +306,7 @@ $ ->
 	  letterCase: 'uppercase',
 	  change: (hex, rgb) ->
       setBackground(hex)
+      options.background = hex.replace(/#/,'')
   }
   )
 
@@ -294,9 +316,15 @@ $ ->
 	  letterCase: 'uppercase',
 		change: (hex, rgb) ->
       map.line(hex)
+      options.line = hex.replace(/#/,'')
   }
   )
 
   $("#lineColor").miniColors('value', options.line)
+
+  $('#save_link').click (e) ->
+    e.preventDefault()
+    options.data = map.data()
+    Hash.set(options)
 
 
