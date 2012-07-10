@@ -2,6 +2,10 @@ body {
   background-color: #A4DCDD;
 }
 
+a, a:visited {
+  color: #555;
+}
+
 #container {
   /* margin: auto; */
   /* width:1064px; */
@@ -74,7 +78,7 @@ li.location {
 }
 
 #controls {
-  width:1064px;
+  /* width:1064px; */
   margin-top: 15px;
   padding:5px;
 }

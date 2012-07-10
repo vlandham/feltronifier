@@ -331,5 +331,13 @@ $ ->
     encoded = rison.encode(options)
     document.location.hash = encoded
 
+  $("#examples_link").click (e) ->
+    e.preventDefault()
+    $("#examples_list").toggle()
+
+  $("#about_link").click (e) ->
+    e.preventDefault()
+    $("#about_text").toggle()
+
 
 
