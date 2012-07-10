@@ -95,7 +95,6 @@ FeltMap = () ->
 
   fmap.add = (point) ->
     data.push(point)
-    console.log(point)
     update()
     fmap.displayLocations(locationsDivId)
     fmap
@@ -109,9 +108,7 @@ FeltMap = () ->
     fmap
 
   fmap.remove = (index) ->
-    console.log(index)
     data.splice(index,1)
-    console.log(data)
     update()
     node.attr("r", 0)
     fmap.displayLocations(locationsDivId)
@@ -241,10 +238,11 @@ setBackground = (newBackground) ->
   $('body').css({"background-color":newBackground})
 
 $ ->
+  loaded_options = rison.decode(document.location.hash.replace(/^#/,""))
   options =
-    opacity:Hash.get('opacity') or 0.5
-    line:Hash.get('line') or "DDDDDD"
-    background:Hash.get('background') or "198587"
+    opacity:loaded_options.opacity or 0.5
+    line:loaded_options.line or "FFFFFF"
+    background:loaded_options.background or "198587"
 
   options.background = "#{options.background}"
   options.line = "#{options.line}"
@@ -254,12 +252,11 @@ $ ->
 
   setBackground(options.background)
 
-  data = Hash.get('data')
+  loaded_data = loaded_options.data
 
-  if data
+  if loaded_data
     console.log('loading data from url')
-    map.data(data)
-    plotData("#vis", data, map)
+    plotData("#vis", loaded_data, map)
     map.displayLocations("#all_locations")
   else
     d3.csv "data/locations.csv", (data) ->
@@ -325,6 +322,8 @@ $ ->
   $('#save_link').click (e) ->
     e.preventDefault()
     options.data = map.data()
-    Hash.set(options)
+    encoded = rison.encode(options)
+    document.location.hash = encoded
+
 
 
