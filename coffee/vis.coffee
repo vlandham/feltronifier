@@ -238,7 +238,10 @@ setBackground = (newBackground) ->
   $('body').css({"background-color":newBackground})
 
 $ ->
-  loaded_options = rison.decode(document.location.hash.replace(/^#/,""))
+  if document.location.hash
+    loaded_options = rison.decode(document.location.hash.replace(/^#/,""))
+  else
+    loaded_options = {}
   options =
     opacity:loaded_options.opacity or 0.5
     line:loaded_options.line or "FFFFFF"
@@ -318,6 +321,9 @@ $ ->
   )
 
   $("#lineColor").miniColors('value', options.line)
+
+  $('#clear_all').click (e) ->
+    map.data([])
 
   $('#save_link').click (e) ->
     e.preventDefault()
