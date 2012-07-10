@@ -123,18 +123,21 @@ FeltMap = () ->
     locationsDiv.selectAll(".location").remove()
 
     loc = locationsDiv.selectAll(".location")
-      .data(data, (d) -> "#{d.lat},#{d.lon}")
+      .data(data, (d) -> "#{roundNumber(d.lat, 6)},#{roundNumber(d.lon, 6)}")
 
-    loc.enter().append("li")
+    row = loc.enter().append("tr")
       .attr("class", "location")
-      .text((d) -> "#{d.lat}, #{d.lon}")
+    row.append("td")
+      .text((d) -> d.name or "#{d.lat}, #{d.lon}")
       .on("mouseover", showLocation)
       .on("mouseout", hideLocation)
-      .append("span")
-        .attr("class", "delete_location")
-        .append("a")
-          .text("X")
-          .on("click", (d,i) -> fmap.remove(i))
+    row.append("td")
+      .attr("class", "delete_location")
+      .append("a")
+        .text("X")
+        .on("mouseover", showLocation)
+        .on("mouseout", hideLocation)
+        .on("click", (d,i) -> fmap.remove(i))
 
     loc.exit().remove()
     fmap
@@ -284,9 +287,10 @@ $ ->
       address: val
     }, (results) ->
       if results.length > 0
+        name = val.toUpperCase()
         lat = results[0].geometry.location.lat()
         lon = results[0].geometry.location.lng()
-        point = {"lat":lat,"lon":lon}
+        point = {"lat":lat,"lon":lon, "name":name}
         map.add(point)
     )
 

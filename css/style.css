@@ -55,7 +55,7 @@ ul {
   list-style-type:none;
 }
 
-li.location {
+.location {
   padding-bottom: 5px;
   cursor: default;
 }
