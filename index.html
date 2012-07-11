@@ -16,7 +16,7 @@
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="css/reset.css">
   <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-
+  <link rel="stylesheet" href="css/font-awesome.css">
   <link rel="stylesheet" href="css/jquery.miniColors.css">
   <link rel="stylesheet" href="css/style.css">
   <!-- end CSS-->
@@ -25,13 +25,12 @@
 </head>
 
 <body>
-
   <div id="container">
     <div id="vis"></div>
     <div class="drawer">
       <div class="hud">
         <div id="controls" class="content">
-          <h2>Map Options</h2>
+          <h2><i class="icon-globe"></i> Map Options</h2>
           <div class="control">
             <h3>Map Opacity</h3>
             <input id="mapOpacity" type="range" min="0" max="1.0" step="0.1" value="0.5">
@@ -44,35 +43,40 @@
             <h3>Line Color</h3>
             <input type="text" id="lineColor" name="lineColor" class="color-picker" size="6" />
           </div>
+          <div class="control">
+            <h3>Annotation Color</h3>
+            <input type="text" id="annotationColor" name="annotationColor" class="color-picker" size="6" />
+          </div>
           <div class="points">
-            <h3>Locations</h3>
+            <h2><i class="icon-flag"></i> Locations</h2>
             <table id="all_locations">
             </table>
             <div class="control">
-              <p><a href="#" id="clear_all">Clear All</a></p>
+              <p><a href="#" id="clear_all"><i class="icon-remove-sign"></i> Clear All</a></p>
             </div>
-            <h4>Add New Location</h4>
-            <p><a href="#" id="examples_link">Examples</a>
-              <ul id="examples_list" style="display:none">
-                <li>kansas city, mo</li>
-                <li>hawaii</li>
-                <li>lima, peru</li>
-              </ul>
-            </p>
+            <h4><i class="icon-plus"></i> Add New Location</h4>
+            <!-- <p><a href="#" id="examples_link">Examples</a> -->
+            <!--   <ul id="examples_list" style="display:none"> -->
+            <!--     <li>kansas city, mo</li> -->
+            <!--     <li>hawaii</li> -->
+            <!--     <li>lima, peru</li> -->
+            <!--   </ul> -->
+            <!-- </p> -->
 
             <form id="newPoint">
               <input type="text" id="pointInput"/>
               <input type="submit" id="pointSubmit" value="Add"/>
             </form>
           </div>
+          <br/>
           <div class="control">
-            <p><a href="#" id="save_link">Save</a></p>
+            <p><a href="#" id="save_link"><i class="icon-bolt"></i> Save</a></p>
           </div>
           <div class="divider"></div>
           <div class="control">
-            <p><a href="#" id="about_link">About</a></p>
+            <p><a href="#" id="about_link"><i class="icon-question-sign"></i> About</a></p>
             <p id="about_text" style="display:none">
-              Feltronifier allows you to make <a href="http://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay</a> style maps, similar to the one seen in the <a href="http://feltron.com/ar10_07.html">2010 Feltron Annual Report</a>.<br/><br/>
+              Feltronifier allows you to make <a href="http://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">Delaunay</a> style maps, similar to the one seen in the <a href="http://feltron.com/ar10_07.html" target="_blank">2010 Feltron Annual Report</a>.<br/><br/>
               Add some points, change the colors around. Clicking save will store your map in the url so you can get back to it later. <br/><br/>Enjoy!
             </p>
             </p>

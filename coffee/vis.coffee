@@ -14,13 +14,15 @@ FeltMap = () ->
   path = d3.geo.path().projection(projection)
   mapG = null
   locG = null
+  annoG = null
   linesG = null
   node = null
+  annotation = null
   line = null
   map = null
   locationsDivId = null
   lineColor = "#fff"
-  nodeColor = "#fff"
+  nodeColor = "#1F4C59"
   lineSize = 1.3
   mapOpacity = 0.8
   nodeRadius = 4
@@ -65,6 +67,9 @@ FeltMap = () ->
       locG = g.append("g")
         .attr("id", "locations")
 
+      annoG = g.append("g")
+        .attr("id", "annotations")
+
       d3.json "data/countries.geo.json", (json) ->
         drawMap(json)
         update()
@@ -91,6 +96,11 @@ FeltMap = () ->
     nodeColor = _
     if node
       node.style("fill", nodeColor)
+    if annotation
+      annotation.selectAll("line")
+        .style("stroke", nodeColor)
+      annotation.selectAll("text")
+        .style("fill", nodeColor)
     fmap
 
   fmap.add = (point) ->
@@ -127,31 +137,36 @@ FeltMap = () ->
 
     row = loc.enter().append("tr")
       .attr("class", "location")
-    row.append("td")
+    eyeDet = row.append("td").append("a")
+      .attr("href", "#")
       .attr("id", (d,i) -> "show_#{i}")
       .attr("class", (d) -> if d.visible then "active_show_loc show_loc" else "show_loc")
-      .text("S")
       .on("mouseover", showLocation)
       .on("mouseout", hideLocation)
       .on "click", (d,i) ->
         if d.visible
           d.visible = false
+          d3.select(this).select("i").classed("icon-eye-open", false).classed("icon-eye-close",true)
         else
           d.visible = true
+          d3.select(this).select("i").classed("icon-eye-open", true).classed("icon-eye-close",false)
         update()
+    eyeDet.append("i")
+      .attr("class", (d) ->  if d.visible then "active_show_loc show_loc icon-eye-open" else "show_loc icon-eye-close")
     row.append("td")
       .attr("id", (d,i) -> "edit_#{i}")
       .attr("class", "edit_area")
       .text((d) -> d.name or "#{d.lat}, #{d.lon}")
       .on("mouseover", showLocation)
       .on("mouseout", hideLocation)
-    row.append("td")
+    delDet = row.append("td")
       .attr("class", "delete_location")
       .append("a")
-        .text("X")
         .on("mouseover", showLocation)
         .on("mouseout", hideLocation)
         .on("click", (d,i) -> fmap.remove(i))
+    delDet.append("i")
+      .attr("class", "icon-remove")
 
     $('.edit_area').editable (value, settings) ->
       index = parseInt(d3.select(this).attr("id").replace("edit_",""))
@@ -218,6 +233,38 @@ FeltMap = () ->
       .attr("r", (d,i) -> if data[i].visible then nodeRadius else 0)
       .style("fill", nodeColor)
 
+    # annotated_locations = locations.filter (d,i) -> data[i].visible
+    # console.log(annotated_locations)
+
+    annotation = annoG.selectAll(".annotation")
+      .data(locations)
+
+    annotationE = annotation.enter().append("g")
+      .attr("class", "annotation")
+
+    annotation.attr("transform", (d) -> "translate(#{d[0]},#{d[1]})")
+      .style("opacity", (d,i) -> if data[i].visible then 1 else 0)
+
+    annotationE.append('text')
+      .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
+      .attr("dx", -20)
+      .attr("dy", -5)
+      .attr("text-anchor", "end")
+      .attr("fill", nodeColor)
+
+    annotationE.append("line")
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", (d,i) -> -20 - 8 * name(data[i]).length)
+      .attr("y2", 0)
+      .attr("stroke", nodeColor)
+      .style("stroke-dasharray", "2, 2")
+
+    annotation.exit().remove()
+
+  name = (d) ->
+    d.name or "#{d.lat}#{d.lon}"
+
   click = (d) ->
     centroid = path.centroid(d)
     translate = projection.translate()
@@ -272,12 +319,13 @@ $ ->
     opacity:loaded_options.opacity or 0.5
     line:loaded_options.line or "FFFFFF"
     background:loaded_options.background or "198587"
+    annotation:loaded_options.annotation or "09161A"
 
   options.background = "#{options.background}"
   options.line = "#{options.line}"
 
   map = FeltMap().opacity(options.opacity)
-    .line(options.line)
+    .line(options.line).node(options.annotation)
 
   setBackground(options.background)
 
@@ -348,6 +396,16 @@ $ ->
   )
 
   $("#lineColor").miniColors('value', options.line)
+
+  $("#annotationColor").miniColors({
+	  letterCase: 'uppercase',
+		change: (hex, rgb) ->
+      map.node(hex)
+      options.annotation = hex.replace(/#/,'')
+  }
+  )
+
+  $("#annotationColor").miniColors('value', options.annotation)
 
   $('#clear_all').click (e) ->
     map.data([])

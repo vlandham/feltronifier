@@ -42,6 +42,10 @@ div.drawer {
   overflow-x: hidden;
 }
 
+#all_locations {
+  margin-left: 7px;
+}
+
 .delete_location {
   padding-left:10px;
 }
@@ -62,6 +66,11 @@ ul {
 
 .delete_location {
   cursor: pointer:
+}
+
+.show_loc {
+  padding-right: 5px;
+  text-decoration: none;
 }
 
 .delete_location a:hover {
