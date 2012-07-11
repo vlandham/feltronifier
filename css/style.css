@@ -57,11 +57,15 @@ ul {
 
 .location {
   padding-bottom: 5px;
-  cursor: default;
+  cursor: pointer;
 }
 
 .delete_location {
   cursor: pointer:
+}
+
+.delete_location a:hover {
+  color: red;
 }
 
 /* #countries { */

@@ -23,7 +23,7 @@ FeltMap = () ->
   nodeColor = "#fff"
   lineSize = 1.3
   mapOpacity = 0.8
-  nodeRadius = 0
+  nodeRadius = 4
 
   zoomer = () ->
     projection.translate(d3.event.translate).scale(d3.event.scale)
@@ -128,6 +128,20 @@ FeltMap = () ->
     row = loc.enter().append("tr")
       .attr("class", "location")
     row.append("td")
+      .attr("id", (d,i) -> "show_#{i}")
+      .attr("class", (d) -> if d.visible then "active_show_loc show_loc" else "show_loc")
+      .text("S")
+      .on("mouseover", showLocation)
+      .on("mouseout", hideLocation)
+      .on "click", (d,i) ->
+        if d.visible
+          d.visible = false
+        else
+          d.visible = true
+        update()
+    row.append("td")
+      .attr("id", (d,i) -> "edit_#{i}")
+      .attr("class", "edit_area")
       .text((d) -> d.name or "#{d.lat}, #{d.lon}")
       .on("mouseover", showLocation)
       .on("mouseout", hideLocation)
@@ -139,14 +153,23 @@ FeltMap = () ->
         .on("mouseout", hideLocation)
         .on("click", (d,i) -> fmap.remove(i))
 
+    $('.edit_area').editable (value, settings) ->
+      index = parseInt(d3.select(this).attr("id").replace("edit_",""))
+      data[index].name = value
+      return value
+
     loc.exit().remove()
     fmap
 
   showLocation = (d,i) ->
-    node.filter( (e,n) -> n == i).attr("r", 6).style("fill", "red")
+    node.filter( (e,n) -> n == i)
+      .attr("r", 6)
+      .style("fill", "red")
 
   hideLocation = (d,i) ->
-    node.attr("r", 0)
+    node
+      .attr("r", (n,e) -> if data[e].visible then nodeRadius else 0)
+      .style("fill", nodeColor)
 
   drawMap = (json) ->
     map = mapG.selectAll("path")
@@ -192,7 +215,7 @@ FeltMap = () ->
       .attr("class", "location")
     node.attr("cx", (d) -> d[0])
       .attr("cy", (d) -> d[1])
-      .attr("r", nodeRadius)
+      .attr("r", (d,i) -> if data[i].visible then nodeRadius else 0)
       .style("fill", nodeColor)
 
   click = (d) ->
