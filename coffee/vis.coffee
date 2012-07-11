@@ -1,6 +1,12 @@
 
 root = exports ? this
 
+#
+# WARNING:
+# this code is really really awful. 
+# do not use.
+#
+
 FeltMap = () ->
   width = 1024
   height = 600
@@ -119,13 +125,16 @@ FeltMap = () ->
 
   fmap.remove = (index) ->
     data.splice(index,1)
-    update()
     node.attr("r", 0)
+    update()
     fmap.displayLocations(locationsDivId)
     fmap
-    # data.push(point)
-    # update()
-    #
+
+  fmap.updateName = (index, value) ->
+    data[index].name = value
+    update()
+    fmap
+
   fmap.displayLocations = (id) ->
     locationsDivId = id
     locationsDiv = d3.select(id)
@@ -170,7 +179,7 @@ FeltMap = () ->
 
     $('.edit_area').editable (value, settings) ->
       index = parseInt(d3.select(this).attr("id").replace("edit_",""))
-      data[index].name = value
+      fmap.updateName(index, value)
       return value
 
     loc.exit().remove()
@@ -225,15 +234,17 @@ FeltMap = () ->
 
     node = locG.selectAll("circle.location")
       .data(locations)
+
+    node.exit().remove()
+
     node.enter()
       .append("circle")
       .attr("class", "location")
+
     node.attr("cx", (d) -> d[0])
       .attr("cy", (d) -> d[1])
       .attr("r", (d,i) -> if data[i].visible then nodeRadius else 0)
       .style("fill", nodeColor)
-
-    node.exit().remove()
 
     annotation = annoG.selectAll(".annotation")
       .data(locations)
@@ -245,19 +256,23 @@ FeltMap = () ->
       .style("opacity", (d,i) -> if data[i].visible then 1 else 0)
 
     annotationE.append('text')
-      .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
       .attr("dx", -20)
       .attr("dy", -5)
       .attr("text-anchor", "end")
       .attr("fill", nodeColor)
 
+    annotation.select("text")
+      .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
+
     annotationE.append("line")
       .attr("x1", 0)
       .attr("y1", 0)
-      .attr("x2", (d,i) -> -20 - 8 * name(data[i]).length)
       .attr("y2", 0)
       .attr("stroke", nodeColor)
       .style("stroke-dasharray", "2, 2")
+
+    annotation.select("line")
+      .attr("x2", (d,i) -> -20 - 8 * name(data[i]).length)
 
     annotation.exit().remove()
 
