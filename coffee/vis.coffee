@@ -233,8 +233,7 @@ FeltMap = () ->
       .attr("r", (d,i) -> if data[i].visible then nodeRadius else 0)
       .style("fill", nodeColor)
 
-    # annotated_locations = locations.filter (d,i) -> data[i].visible
-    # console.log(annotated_locations)
+    node.exit().remove()
 
     annotation = annoG.selectAll(".annotation")
       .data(locations)
