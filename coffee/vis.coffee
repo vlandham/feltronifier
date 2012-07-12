@@ -296,10 +296,8 @@ FeltMap = () ->
     annotation.select("text")
       .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
       .attr("text-anchor", (d,i) -> if data[i].right then "start" else "end")
-      .attr("dx", (d,i) -> if data[i].right then 20 else -20)
-
-    console.log(annotation.select("text").attr("dx"))
-    console.log(data)
+      # .attr("dx", (d,i) -> if data[i].right then 20 else "-20")
+      .attr("x", (d,i) -> if data[i].right then 20 else "-20")
 
     annotationE.append("line")
       .attr("x1", 0)
