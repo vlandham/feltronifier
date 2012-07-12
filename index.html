@@ -30,6 +30,14 @@
     <div class="drawer">
       <div class="hud">
         <div id="controls" class="content">
+          <h1><i class="icon-bolt"></i> Feltronifier <i class="icon-bolt"></i></h1>
+          <div class="control">
+            <p><a href="#" id="about_link"><i class="icon-question-sign"></i> About</a></p>
+            <p id="about_text" style="display:none">
+              Feltronifier allows you to make <a href="http://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">Delaunay</a> style maps, similar to the one seen in the <a href="http://feltron.com/ar10_07.html" target="_blank">2010 Feltron Annual Report</a>.<br/><br/>
+              Add new locations by typing a search term, change the colors around, and change your annotation text.<br/> Clicking <i class="icon-bolt"></i>Save will store your map in the url so you can get back to it later. <br/><br/>Created by <a href="http://vallandingham.me/" target="_blank">Jim Vallandingham</a>
+            </p>
+          </div>
           <h2><i class="icon-globe"></i> Map Options</h2>
           <div class="control">
             <h3>Map Opacity</h3>
@@ -71,15 +79,10 @@
           <br/>
           <div class="control">
             <p><a href="#" id="save_link"><i class="icon-bolt"></i> Save</a></p>
+            <input type="text" id="saveSpace" name="saveSpace"  size="10" style="display:none;" />
           </div>
           <div class="divider"></div>
-          <div class="control">
-            <p><a href="#" id="about_link"><i class="icon-question-sign"></i> About</a></p>
-            <p id="about_text" style="display:none">
-              Feltronifier allows you to make <a href="http://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">Delaunay</a> style maps, similar to the one seen in the <a href="http://feltron.com/ar10_07.html" target="_blank">2010 Feltron Annual Report</a>.<br/><br/>
-              Add some points, change the colors around. Clicking save will store your map in the url so you can get back to it later. <br/><br/>Created by <a href="http://vallandingham.me/">Jim Vallandingham</a>
-            </p>
-          </div>
+          <p id="google_power">Powered by Google</p>
         </div>
       </div>
     </div>

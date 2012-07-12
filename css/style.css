@@ -4,6 +4,16 @@ body {
 
 a, a:visited {
   color: #555;
+  text-decoration:none;
+}
+
+#about_text {
+  padding:5px;
+  border: 1px #ddd solid;
+}
+
+#about_text a {
+  text-decoration:underline;
 }
 
 #container {
@@ -20,6 +30,7 @@ a, a:visited {
   bottom: 0px;
 }
 
+
 div.drawer {
   position: absolute;
   top: 0px;
@@ -29,6 +40,15 @@ div.drawer {
   border-left: 1px solid #CCC;
   background: white;
   background: rgba(255, 255, 255, 0.9);
+}
+
+#saveSpace {
+  width: 300px;
+}
+
+
+#google_power {
+  font-size: 0.8em;
 }
 
 .hud .content {
@@ -69,6 +89,11 @@ ul {
 }
 
 .show_loc {
+  padding-right: 5px;
+  text-decoration: none;
+}
+
+.toggle_dir {
   padding-right: 5px;
   text-decoration: none;
 }

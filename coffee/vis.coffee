@@ -43,11 +43,19 @@ FeltMap = () ->
     .scale(projection.scale())
     .on("zoom", zoomer)
 
+  cleanData = (rawData) ->
+    rawData.forEach (d) ->
+      unless d.visible?
+        d.visible = false
+      unless d.right?
+        d.right = false
+    rawData
+
   fmap = (selection) ->
     selection.each (rawData) ->
       width = $(this).width() - 320
       height = $(this).height()
-      data = rawData
+      data = cleanData(rawData)
       svg = d3.select(this).selectAll("svg").data([data])
       gEnter = svg.enter().append("svg")
       svg.attr("width", width + margin.left + margin.right )
@@ -153,15 +161,19 @@ FeltMap = () ->
       .on("mouseover", showLocation)
       .on("mouseout", hideLocation)
       .on "click", (d,i) ->
-        if d.visible
-          d.visible = false
-          d3.select(this).select("i").classed("icon-eye-open", false).classed("icon-eye-close",true)
-        else
-          d.visible = true
-          d3.select(this).select("i").classed("icon-eye-open", true).classed("icon-eye-close",false)
-        update()
+        toggleVisible(d,i,this)
     eyeDet.append("i")
       .attr("class", (d) ->  if d.visible then "active_show_loc show_loc icon-eye-open" else "show_loc icon-eye-close")
+
+    dirDet = row.append("td").append("a")
+      .attr("href", "#")
+      .attr("id", (d,i) -> "direction_#{i}")
+      .attr("class", (d) -> if d.right then "toggle_dir right_dir" else "toggle_dir left_dir")
+      .on("mouseover", showLocation)
+      .on("mouseout", hideLocation)
+      .on "click", (d,i) -> toggleDirection(data[i],i)
+    dirDet.append("i")
+      .attr("class", (d) -> if d.right then "icon-arrow-right" else "icon-arrow-left")
     row.append("td")
       .attr("id", (d,i) -> "edit_#{i}")
       .attr("class", "edit_area")
@@ -184,6 +196,15 @@ FeltMap = () ->
 
     loc.exit().remove()
     fmap
+
+  toggleVisible = (d,i,selector) ->
+    if d.visible
+      d.visible = false
+      d3.select(selector).select("i").classed("icon-eye-open", false).classed("icon-eye-close",true)
+    else
+      d.visible = true
+      d3.select(selector).select("i").classed("icon-eye-open", true).classed("icon-eye-close",false)
+    update()
 
   showLocation = (d,i) ->
     node.filter( (e,n) -> n == i)
@@ -215,6 +236,17 @@ FeltMap = () ->
     lines = d3.geom.delaunay(locations)
     lines
 
+  toggleDirection = (d,i,selelector) ->
+    if !selelector
+      selector = "#direction_#{i}"
+    if data[i].right
+      data[i].right = false
+      d3.select(selector).select("i").classed("icon-arrow-right", false).classed("icon-arrow-left",true)
+    else
+      data[i].right = true
+      d3.select(selector).select("i").classed("icon-arrow-right", true).classed("icon-arrow-left",false)
+    update()
+
   update = () ->
     setupLocations()
     setupLines()
@@ -240,6 +272,8 @@ FeltMap = () ->
     node.enter()
       .append("circle")
       .attr("class", "location")
+      .on "click", (d,i) ->
+        toggleDirection(d,i)
 
     node.attr("cx", (d) -> d[0])
       .attr("cy", (d) -> d[1])
@@ -256,13 +290,13 @@ FeltMap = () ->
       .style("opacity", (d,i) -> if data[i].visible then 1 else 0)
 
     annotationE.append('text')
-      .attr("dx", -20)
       .attr("dy", -5)
-      .attr("text-anchor", "end")
       .attr("fill", nodeColor)
 
     annotation.select("text")
       .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
+      .attr("dx", (d,i) -> if data[i].right then 20 else -20)
+      .attr("text-anchor", (d,i) -> if data[i].right then "start" else "end")
 
     annotationE.append("line")
       .attr("x1", 0)
@@ -272,7 +306,11 @@ FeltMap = () ->
       .style("stroke-dasharray", "2, 2")
 
     annotation.select("line")
-      .attr("x2", (d,i) -> -20 - 8 * name(data[i]).length)
+      .attr "x2", (d,i) ->
+        if data[i].right
+          20 + 8 * name(data[i]).length
+        else
+          -20 - 8 * name(data[i]).length
 
     annotation.exit().remove()
 
@@ -429,6 +467,8 @@ $ ->
     options.data = map.data()
     encoded = rison.encode(options)
     document.location.hash = encoded
+    $("#saveSpace").val(document.location)
+    $("#saveSpace").show()
 
   $("#examples_link").click (e) ->
     e.preventDefault()
