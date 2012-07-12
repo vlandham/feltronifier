@@ -295,8 +295,11 @@ FeltMap = () ->
 
     annotation.select("text")
       .text((d,i) -> data[i].name or "#{data[i].lat}#{data[i].lon}")
-      .attr("dx", (d,i) -> if data[i].right then 20 else -20)
       .attr("text-anchor", (d,i) -> if data[i].right then "start" else "end")
+      .attr("dx", (d,i) -> if data[i].right then 20 else -20)
+
+    console.log(annotation.select("text").attr("dx"))
+    console.log(data)
 
     annotationE.append("line")
       .attr("x1", 0)
@@ -308,10 +311,10 @@ FeltMap = () ->
     annotation.select("line")
       .attr "x2", (d,i) ->
         if data[i].right
-          20 + 8 * name(data[i]).length
+          20 + (8 * name(data[i]).length)
         else
-          -20 - 8 * name(data[i]).length
-
+          -20 - (8 * name(data[i]).length)
+  
     annotation.exit().remove()
 
   name = (d) ->
@@ -377,9 +380,9 @@ $ ->
   options.line = "#{options.line}"
 
   map = FeltMap().opacity(options.opacity)
-    .line(options.line).node(options.annotation)
+    .line("##{options.line}").node("##{options.annotation}")
 
-  setBackground(options.background)
+  setBackground("##{options.background}")
 
   loaded_data = loaded_options.data
 
