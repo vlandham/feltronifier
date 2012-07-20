@@ -372,7 +372,7 @@ $ ->
     opacity:loaded_options.opacity or 0.5
     line:loaded_options.line or "FFFFFF"
     background:loaded_options.background or "198587"
-    annotation:loaded_options.annotation or "09161A"
+    annotation:loaded_options.annotation or "FFBC75"
 
   options.background = "#{options.background}"
   options.line = "#{options.line}"
